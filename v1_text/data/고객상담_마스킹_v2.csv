@@ -1,0 +1,4 @@
+﻿raw_text,masked_text,entities
+"안녕하세요, 김철수 고객님. 귀하의 카드 번호는 1234-5678-9012-3456입니다.","안녕하세요, [PERSON_NAME] 고객님. 귀하의 카드 번호는 [CARD_NUMBER]입니다.","[{'text': '김철수', 'type': 'PERSON_NAME', 'start': 10, 'end': 13}, {'text': '1234-5678-9012-3456', 'type': 'CARD_NUMBER', 'start': 30, 'end': 50}]"
+"고객님, 귀하의 전화번호는 010-1234-5678입니다. 확인 부탁드립니다.","고객님, 귀하의 전화번호는 [PHONE_NUMBER]입니다. 확인 부탁드립니다.","[{'text': '010-1234-5678', 'type': 'PHONE_NUMBER', 'start': 20, 'end': 35}]"
+홍길동 고객님의 주민등록번호는 123456-1234567입니다.,[PERSON_NAME] 고객님의 주민등록번호는 [RESIDENT_ID]입니다.,"[{'text': '홍길동', 'type': 'PERSON_NAME', 'start': 0, 'end': 3}, {'text': '123456-1234567', 'type': 'RESIDENT_ID', 'start': 15, 'end': 31}]"
