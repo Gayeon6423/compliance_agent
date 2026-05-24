@@ -38,34 +38,83 @@ def _strip_json_fence(text: str) -> str:
         cleaned = "\n".join(lines).strip()
     return cleaned
 
+
+def _normalize_entities(entities: object) -> str:
+    if isinstance(entities, str):
+        return entities
+    return json.dumps(entities, ensure_ascii=False)
+
+
+def _parse_json_array(text: str) -> list[dict]:
+    cleaned = _strip_json_fence(text)
+    data = json.loads(cleaned)
+    if not isinstance(data, list):
+        raise ValueError("LLM 응답은 JSON 배열(list)이어야 합니다.")
+    return data
+
+
+def _build_user_prompt(dataset_name: str, topic: str, count: int) -> str:
+    return f"""
+Dataset name: {dataset_name}
+Topic: {topic}
+Sentence Rows: {count}
+
+Requirements:
+- JSON 배열(Array)만 반환하세요. 마크다운 코드펜스 금지.
+- 각 원소는 raw_text, entities, masked_text 키를 포함해야 합니다.
+- entities는 배열이며 각 원소는 text, type, start, end 키를 포함해야 합니다.
+- start/end는 정수여야 합니다.
+- 요청한 count만큼만 생성하세요.
+""".strip()
+
+
+def _generate_batch(dataset_name: str, topic: str, batch_count: int, system_prompt: str) -> list[dict]:
+    raw_response = chat(
+        system_prompt=system_prompt,
+        user_prompt=_build_user_prompt(dataset_name, topic, batch_count),
+    )
+    try:
+        return _parse_json_array(raw_response)
+    except json.JSONDecodeError as exc:
+        if batch_count <= 1:
+            raise RuntimeError(
+                f"LLM 응답 JSON 파싱 실패: {exc}. 응답 앞부분: {raw_response[:500]}"
+            ) from exc
+
+        retry_response = chat(
+            system_prompt=system_prompt,
+            user_prompt=(
+                _build_user_prompt(dataset_name, topic, batch_count)
+                + "\n\n중요: 이전 응답은 JSON 파싱에 실패했습니다."
+                + "\n유효한 JSON 배열만 출력하고 배열 외 텍스트를 절대 출력하지 마세요."
+            ),
+        )
+        try:
+            return _parse_json_array(retry_response)
+        except json.JSONDecodeError as retry_exc:
+            raise RuntimeError(
+                f"LLM 재시도 응답 JSON 파싱 실패: {retry_exc}. 응답 앞부분: {retry_response[:500]}"
+            ) from retry_exc
+
 def generate_text(
     dataset_name: str,
     topic: str,
     count: int,
     output_csv_path: str,
     system_prompt: str) -> str:
-    user_prompt = f"""
-Dataset name: {dataset_name}
-Topic: {topic}
-Sentence Rows: {count}
-
-Requirements:
-- 금융 도메인 기반의 마스킹 텍스트 데이터셋을 생성하세요.
-- JSON 배열(Array)만 반환하세요. 마크다운 코드펜스 금지.
-- 모든 값은 문자열로 생성하세요.
-""".strip()
-
     system_prompt = system_prompt.strip()
-    raw_response = chat(
-        system_prompt=system_prompt,
-        user_prompt=user_prompt,
-    )
-    cleaned = _strip_json_fence(raw_response)
-    data = json.loads(cleaned)
-    print('data:',data)
+    batch_size = min(3, max(1, count))
+    data: list[dict] = []
 
-    if not isinstance(data, list):
-        raise ValueError("LLM 응답은 JSON 배열(list)이어야 합니다.")
+    while len(data) < count:
+        remaining = count - len(data)
+        current_batch_size = min(batch_size, remaining)
+        batch_data = _generate_batch(dataset_name, topic, current_batch_size, system_prompt)
+        data.extend(batch_data[:current_batch_size])
+        if current_batch_size == 1:
+            batch_size = 1
+
+    print('data:', data)
 
     expected_keys = {"raw_text", "masked_text", "entities"} 
     normalized_rows = []
@@ -81,7 +130,7 @@ Requirements:
             {
                 "raw_text": str(row["raw_text"]),
                 "masked_text": str(row["masked_text"]),
-                "entities": str(row["entities"])
+                "entities": _normalize_entities(row["entities"])
             }
         )
 

@@ -1,0 +1,189 @@
+﻿raw_text,masked_text,entities
+"입출금통장 개설 신청서
+신청인 성명: 김서윤
+주민등록번호: 900315-2******
+휴대전화: 010-6348-1290
+주소: 서울특별시 마포구 양화로 45, 1203동 905호
+직장명: 주식회사 넥스파인
+직장주소: 서울특별시 강남구 테헤란로 231, 18층
+결제계좌: 110-245-998877
+이메일: seoyoon.kim@example.com
+신청일: 2026-05-12","입출금통장 개설 신청서
+신청인 성명: [PERSON_NAME]
+주민등록번호: [ID_NUMBER]
+휴대전화: [PHONE_NUMBER]
+주소: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+결제계좌: [PAYMENT_ACCOUNT_NUMBER]
+이메일: [EMAIL]
+신청일: 2026-05-12","[{""text"": ""김서윤"", ""type"": ""PERSON_NAME"", ""start"": 20, ""end"": 23}, {""text"": ""900315-2******"", ""type"": ""ID_NUMBER"", ""start"": 33, ""end"": 47}, {""text"": ""010-6348-1290"", ""type"": ""PHONE_NUMBER"", ""start"": 56, ""end"": 69}, {""text"": ""서울특별시 마포구 양화로 45, 1203동 905호"", ""type"": ""ADDRESS"", ""start"": 74, ""end"": 100}, {""text"": ""주식회사 넥스파인"", ""type"": ""WORKPLACE_NAME"", ""start"": 108, ""end"": 118}, {""text"": ""서울특별시 강남구 테헤란로 231, 18층"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 126, ""end"": 149}, {""text"": ""110-245-998877"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 157, ""end"": 171}, {""text"": ""seoyoon.kim@example.com"", ""type"": ""EMAIL"", ""start"": 178, ""end"": 202}]"
+"체크카드 발급 신청서
+고객명: 박민재
+연락처: 010-8820-7714
+배송주소: 부산광역시 해운대구 센텀중앙로 97, 1502호
+근무처: 카페오브제 부산센텀점
+근무지 주소: 부산광역시 해운대구 우동 1498, 2층
+계좌번호: 333-01-204556
+이메일: minjae.park@mail.com
+본인확인일: 2026-05-18","체크카드 발급 신청서
+고객명: [PERSON_NAME]
+연락처: [PHONE_NUMBER]
+배송주소: [ADDRESS]
+근무처: [WORKPLACE_NAME]
+근무지 주소: [WORKPLACE_ADDRESS]
+계좌번호: [PAYMENT_ACCOUNT_NUMBER]
+이메일: [EMAIL]
+본인확인일: 2026-05-18","[{""text"": ""박민재"", ""type"": ""PERSON_NAME"", ""start"": 30, ""end"": 33}, {""text"": ""010-8820-7714"", ""type"": ""PHONE_NUMBER"", ""start"": 39, ""end"": 52}, {""text"": ""부산광역시 해운대구 센텀중앙로 97, 1502호"", ""type"": ""ADDRESS"", ""start"": 59, ""end"": 85}, {""text"": ""카페오브제 부산센텀점"", ""type"": ""WORKPLACE_NAME"", ""start"": 92, ""end"": 105}, {""text"": ""부산광역시 해운대구 우동 1498, 2층"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 113, ""end"": 135}, {""text"": ""333-01-204556"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 143, ""end"": 156}, {""text"": ""minjae.park@mail.com"", ""type"": ""EMAIL"", ""start"": 163, ""end"": 183}]"
+"고객정보 등록 및 자동이체 신청서
+신청자: 이도현
+휴대폰: 010-2197-4408
+주소: 인천광역시 연수구 송도과학로 56, 1108동 1401호
+직장명: 알파테크코리아
+직장주소: 인천광역시 미추홀구 주안로 123, 7층
+자동이체 출금계좌: 451-10-889900
+이메일: dohyun.lee@alpha.co.kr
+신분증 발급일: 2021-03-22","고객정보 등록 및 자동이체 신청서
+신청자: [PERSON_NAME]
+휴대폰: [PHONE_NUMBER]
+주소: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+자동이체 출금계좌: [PAYMENT_ACCOUNT_NUMBER]
+이메일: [EMAIL]
+신분증 발급일: 2021-03-22","[{""text"": ""이도현"", ""type"": ""PERSON_NAME"", ""start"": 37, ""end"": 40}, {""text"": ""010-2197-4408"", ""type"": ""PHONE_NUMBER"", ""start"": 46, ""end"": 59}, {""text"": ""인천광역시 연수구 송도과학로 56, 1108동 1401호"", ""type"": ""ADDRESS"", ""start"": 64, ""end"": 93}, {""text"": ""알파테크코리아"", ""type"": ""WORKPLACE_NAME"", ""start"": 101, ""end"": 109}, {""text"": ""인천광역시 미추홀구 주안로 123, 7층"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 117, ""end"": 140}, {""text"": ""451-10-889900"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 154, ""end"": 167}, {""text"": ""dohyun.lee@alpha.co.kr"", ""type"": ""EMAIL"", ""start"": 174, ""end"": 196}]"
+"입출금계좌 개설 신청서
+성명: 김도현
+주민등록번호: 900312-1234567
+휴대전화: 010-2345-6789
+주소: 서울특별시 강남구 테헤란로 123, 1502호
+이메일: dohyeon.kim@example.com
+직장명: 주식회사 한빛테크
+직장주소: 서울시 성동구 왕십리로 410, 8층
+결제계좌: 110-245-987654
+신청일: 2026-05-24","입출금계좌 개설 신청서
+성명: [PERSON_NAME]
+주민등록번호: [ID_NUMBER]
+휴대전화: [PHONE_NUMBER]
+주소: [ADDRESS]
+이메일: [EMAIL]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+결제계좌: [PAYMENT_ACCOUNT_NUMBER]
+신청일: 2026-05-24","[{""text"": ""김도현"", ""type"": ""PERSON_NAME"", ""start"": 28, ""end"": 31}, {""text"": ""900312-1234567"", ""type"": ""ID_NUMBER"", ""start"": 43, ""end"": 57}, {""text"": ""010-2345-6789"", ""type"": ""PHONE_NUMBER"", ""start"": 66, ""end"": 79}, {""text"": ""서울특별시 강남구 테헤란로 123, 1502호"", ""type"": ""ADDRESS"", ""start"": 84, ""end"": 110}, {""text"": ""dohyeon.kim@example.com"", ""type"": ""EMAIL"", ""start"": 119, ""end"": 142}, {""text"": ""주식회사 한빛테크"", ""type"": ""WORKPLACE_NAME"", ""start"": 150, ""end"": 159}, {""text"": ""서울시 성동구 왕십리로 410, 8층"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 166, ""end"": 186}, {""text"": ""110-245-987654"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 193, ""end"": 207}]"
+"신용카드 발급 신청서
+신청인: 박서연
+연락처: 010-7788-1122
+배송지: 부산광역시 해운대구 센텀중앙로 97, 1203동 701호
+직장명: 오션에이아이(주)
+직장주소: 부산광역시 연제구 중앙대로 1001
+이메일: seoyeon.park@oceanai.co.kr
+본인확인정보: 850101-2345678
+결제계좌번호: 333-01-445566
+동의여부: 예","신용카드 발급 신청서
+신청인: [PERSON_NAME]
+연락처: [PHONE_NUMBER]
+배송지: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+이메일: [EMAIL]
+본인확인정보: [ID_NUMBER]
+결제계좌번호: [PAYMENT_ACCOUNT_NUMBER]
+동의여부: 예","[{""text"": ""박서연"", ""type"": ""PERSON_NAME"", ""start"": 22, ""end"": 25}, {""text"": ""010-7788-1122"", ""type"": ""PHONE_NUMBER"", ""start"": 33, ""end"": 46}, {""text"": ""부산광역시 해운대구 센텀중앙로 97, 1203동 701호"", ""type"": ""ADDRESS"", ""start"": 51, ""end"": 83}, {""text"": ""오션에이아이(주)"", ""type"": ""WORKPLACE_NAME"", ""start"": 91, ""end"": 101}, {""text"": ""부산광역시 연제구 중앙대로 1001"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 108, ""end"": 128}, {""text"": ""seoyeon.park@oceanai.co.kr"", ""type"": ""EMAIL"", ""start"": 137, ""end"": 163}, {""text"": ""850101-2345678"", ""type"": ""ID_NUMBER"", ""start"": 172, ""end"": 186}, {""text"": ""333-01-445566"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 196, ""end"": 209}]"
+"고객등록 및 자동이체 신청서
+성명: 최민재
+휴대폰: 010-9901-2244
+주소: 인천광역시 연수구 송도과학로 32, 201동 905호
+직장명: 스마트파이낸스㈜
+직장주소: 인천광역시 미추홀구 매소홀로 442
+이메일: minjae.choi@smartfinance.com
+계좌번호: 456-890-123321
+서명일: 2026-05-24","고객등록 및 자동이체 신청서
+성명: [PERSON_NAME]
+휴대폰: [PHONE_NUMBER]
+주소: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+이메일: [EMAIL]
+계좌번호: [PAYMENT_ACCOUNT_NUMBER]
+서명일: 2026-05-24","[{""text"": ""최민재"", ""type"": ""PERSON_NAME"", ""start"": 23, ""end"": 26}, {""text"": ""010-9901-2244"", ""type"": ""PHONE_NUMBER"", ""start"": 34, ""end"": 47}, {""text"": ""인천광역시 연수구 송도과학로 32, 201동 905호"", ""type"": ""ADDRESS"", ""start"": 52, ""end"": 82}, {""text"": ""스마트파이낸스㈜"", ""type"": ""WORKPLACE_NAME"", ""start"": 90, ""end"": 100}, {""text"": ""인천광역시 미추홀구 매소홀로 442"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 107, ""end"": 127}, {""text"": ""minjae.choi@smartfinance.com"", ""type"": ""EMAIL"", ""start"": 136, ""end"": 164}, {""text"": ""456-890-123321"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 172, ""end"": 186}]"
+"입출금계좌 개설 신청서
+성명: 김도윤
+주민등록번호: 900101-1234567
+휴대전화: 010-3145-8821
+주소: 서울특별시 마포구 양화로 45, 1203호
+직장명: 주식회사 넥스파이낸셜
+직장주소: 서울특별시 영등포구 국제금융로 10
+이메일: doyun.kim@example.com
+결제계좌: 110-245-998877
+신청일자: 2026-05-24
+본인은 계좌 개설 및 전자금융서비스 이용에 동의합니다.","입출금계좌 개설 신청서
+성명: [PERSON_NAME]
+주민등록번호: [ID_NUMBER]
+휴대전화: [PHONE_NUMBER]
+주소: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+이메일: [EMAIL]
+결제계좌: [PAYMENT_ACCOUNT_NUMBER]
+신청일자: 2026-05-24
+본인은 계좌 개설 및 전자금융서비스 이용에 동의합니다.","[{""text"": ""김도윤"", ""type"": ""PERSON_NAME"", ""start"": 27, ""end"": 30}, {""text"": ""900101-1234567"", ""type"": ""ID_NUMBER"", ""start"": 41, ""end"": 55}, {""text"": ""010-3145-8821"", ""type"": ""PHONE_NUMBER"", ""start"": 64, ""end"": 77}, {""text"": ""서울특별시 마포구 양화로 45, 1203호"", ""type"": ""ADDRESS"", ""start"": 83, ""end"": 107}, {""text"": ""주식회사 넥스파이낸셜"", ""type"": ""WORKPLACE_NAME"", ""start"": 114, ""end"": 126}, {""text"": ""서울특별시 영등포구 국제금융로 10"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 135, ""end"": 156}, {""text"": ""doyun.kim@example.com"", ""type"": ""EMAIL"", ""start"": 164, ""end"": 185}, {""text"": ""110-245-998877"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 193, ""end"": 207}]"
+"체크카드 발급 신청서
+신청인: 이서준
+연락처: 010-7728-1044
+거주지: 부산광역시 해운대구 센텀중앙로 97, 1508호
+직장명: 에이치에스물류(주)
+직장주소: 부산광역시 연제구 거제천로 158
+결제계좌번호: 356-101-224466
+이메일: seojun.lee@samplemail.co.kr
+카드수령주소: 부산광역시 해운대구 센텀중앙로 97, 1508호
+본 신청서에 기재된 정보는 사실과 같으며 카드 발급 및 본인확인 절차에 동의합니다.","체크카드 발급 신청서
+신청인: [PERSON_NAME]
+연락처: [PHONE_NUMBER]
+거주지: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+결제계좌번호: [PAYMENT_ACCOUNT_NUMBER]
+이메일: [EMAIL]
+카드수령주소: [ADDRESS]
+본 신청서에 기재된 정보는 사실과 같으며 카드 발급 및 본인확인 절차에 동의합니다.","[{""text"": ""이서준"", ""type"": ""PERSON_NAME"", ""start"": 28, ""end"": 31}, {""text"": ""010-7728-1044"", ""type"": ""PHONE_NUMBER"", ""start"": 39, ""end"": 52}, {""text"": ""부산광역시 해운대구 센텀중앙로 97, 1508호"", ""type"": ""ADDRESS"", ""start"": 59, ""end"": 86}, {""text"": ""에이치에스물류(주)"", ""type"": ""WORKPLACE_NAME"", ""start"": 93, ""end"": 103}, {""text"": ""부산광역시 연제구 거제천로 158"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 112, ""end"": 132}, {""text"": ""356-101-224466"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 144, ""end"": 158}, {""text"": ""seojun.lee@samplemail.co.kr"", ""type"": ""EMAIL"", ""start"": 165, ""end"": 193}, {""text"": ""부산광역시 해운대구 센텀중앙로 97, 1508호"", ""type"": ""ADDRESS"", ""start"": 200, ""end"": 227}]"
+"고객정보 등록 및 자동이체 신청서
+고객명: 박하린
+생년월일: 1992-11-03
+휴대폰: 010-9012-6677
+이메일: harin.park@bankmail.com
+주소: 인천광역시 연수구 컨벤시아대로 123, 907호
+직장명: 한울전자주식회사
+직장주소: 인천광역시 남동구 남동대로 750
+출금계좌: 432-880-991122
+납부계좌: 100-555-778899
+동의사항: 전자서명 및 개인정보 수집이용에 동의합니다.","고객정보 등록 및 자동이체 신청서
+고객명: [PERSON_NAME]
+생년월일: 1992-11-03
+휴대폰: [PHONE_NUMBER]
+이메일: [EMAIL]
+주소: [ADDRESS]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+출금계좌: [PAYMENT_ACCOUNT_NUMBER]
+납부계좌: [PAYMENT_ACCOUNT_NUMBER]
+동의사항: 전자서명 및 개인정보 수집이용에 동의합니다.","[{""text"": ""박하린"", ""type"": ""PERSON_NAME"", ""start"": 39, ""end"": 42}, {""text"": ""010-9012-6677"", ""type"": ""PHONE_NUMBER"", ""start"": 65, ""end"": 78}, {""text"": ""harin.park@bankmail.com"", ""type"": ""EMAIL"", ""start"": 85, ""end"": 108}, {""text"": ""인천광역시 연수구 컨벤시아대로 123, 907호"", ""type"": ""ADDRESS"", ""start"": 115, ""end"": 141}, {""text"": ""한울전자주식회사"", ""type"": ""WORKPLACE_NAME"", ""start"": 148, ""end"": 157}, {""text"": ""인천광역시 남동구 남동대로 750"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 166, ""end"": 186}, {""text"": ""432-880-991122"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 191, ""end"": 205}, {""text"": ""100-555-778899"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 213, ""end"": 227}]"
+"계좌개설 및 체크카드 발급 신청서
+성명: 박서준
+영문명: PARK SEO JUN
+휴대전화: 010-9142-6387
+주소: 서울특별시 강남구 테헤란로 123, 1508호
+이메일: seojun.park87@example.com
+주민등록증: 901102-1234567 발급일 2021-08-17
+직장명: 주식회사 미래솔루션
+직장주소: 서울특별시 성동구 아차산로 92, 12층
+결제계좌: 110-245-778899","계좌개설 및 체크카드 발급 신청서
+성명: [PERSON_NAME]
+영문명: [ENGLISH_NAME]
+휴대전화: [PHONE_NUMBER]
+주소: [ADDRESS]
+이메일: [EMAIL]
+주민등록증: [ID_NUMBER] 발급일 [ID_ISSUANCE_DATE]
+직장명: [WORKPLACE_NAME]
+직장주소: [WORKPLACE_ADDRESS]
+결제계좌: [PAYMENT_ACCOUNT_NUMBER]","[{""text"": ""박서준"", ""type"": ""PERSON_NAME"", ""start"": 30, ""end"": 33}, {""text"": ""PARK SEO JUN"", ""type"": ""ENGLISH_NAME"", ""start"": 39, ""end"": 51}, {""text"": ""010-9142-6387"", ""type"": ""PHONE_NUMBER"", ""start"": 58, ""end"": 71}, {""text"": ""서울특별시 강남구 테헤란로 123, 1508호"", ""type"": ""ADDRESS"", ""start"": 77, ""end"": 101}, {""text"": ""seojun.park87@example.com"", ""type"": ""EMAIL"", ""start"": 109, ""end"": 134}, {""text"": ""901102-1234567"", ""type"": ""ID_NUMBER"", ""start"": 141, ""end"": 155}, {""text"": ""2021-08-17"", ""type"": ""ID_ISSUANCE_DATE"", ""start"": 159, ""end"": 169}, {""text"": ""주식회사 미래솔루션"", ""type"": ""WORKPLACE_NAME"", ""start"": 176, ""end"": 188}, {""text"": ""서울특별시 성동구 아차산로 92, 12층"", ""type"": ""WORKPLACE_ADDRESS"", ""start"": 194, ""end"": 216}, {""text"": ""110-245-778899"", ""type"": ""PAYMENT_ACCOUNT_NUMBER"", ""start"": 223, ""end"": 237}]"
