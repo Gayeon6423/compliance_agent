@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://compliance-agent.local/schemas/financial-text-span-schema-v1.json",
+  "title": "FinancialTextSpanRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "document_type",
+    "raw_text",
+    "entities"
+  ],
+  "properties": {
+    "record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "document_type": {
+      "type": "string",
+      "enum": [
+        "customer_service_conversation",
+        "account_or_card_application_form",
+        "credit_loan_review_memo",
+        "investment_account_report",
+        "kyc_aml_review_document",
+        "contract_clause"
+      ]
+    },
+    "raw_text": {
+      "type": "string",
+      "minLength": 1
+    },
+    "masked_text": {
+      "type": "string"
+    },
+    "entities": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/entity"
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "language": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "policy_version": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "entity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "text",
+        "type",
+        "start",
+        "end"
+      ],
+      "properties": {
+        "text": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "PERSON_NAME",
+            "ACCOUNT_NUMBER",
+            "CARD_NUMBER",
+            "PHONE_NUMBER",
+            "ADDRESS",
+            "RESIDENT_REGISTRATION_NUMBER",
+            "INTERNAL_CUSTOMER_ID",
+            "SIGNATURE_REFERENCE"
+          ]
+        },
+        "start": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "end": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "replacement": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    }
+  }
+}

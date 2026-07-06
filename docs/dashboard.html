@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compliance Agent Dashboard</title>
+  <style>
+    :root {
+      --bg: #f3efe6;
+      --panel: rgba(255, 250, 240, 0.9);
+      --ink: #1f2933;
+      --muted: #52606d;
+      --line: #d9cbb7;
+      --accent: #0f766e;
+      --accent-strong: #115e59;
+      --planned: #9a6700;
+      --started: #075985;
+      --progress: #1d4ed8;
+      --blocked: #b91c1c;
+      --done: #166534;
+      --shadow: 0 18px 50px rgba(59, 43, 16, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(15, 118, 110, 0.18), transparent 32%),
+        radial-gradient(circle at top right, rgba(180, 83, 9, 0.15), transparent 28%),
+        linear-gradient(180deg, #f8f5ee 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    button.danger {
+      background: #b91c1c;
+      color: #fff7f7;
+    }
+
+    button.warning {
+      background: #f59e0b;
+      color: #3b2f0b;
+    }
+
+    button.primary-alt {
+      background: #2563eb;
+      color: #eff6ff;
+    }
+
+    .shell {
+      width: min(1280px, calc(100% - 32px));
+      margin: 24px auto 40px;
+    }
+
+    .hero {
+      padding: 28px;
+      border: 1px solid rgba(15, 118, 110, 0.18);
+      border-radius: 24px;
+      background: linear-gradient(135deg, rgba(255, 250, 240, 0.95), rgba(238, 248, 246, 0.92));
+      box-shadow: var(--shadow);
+    }
+
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(30px, 5vw, 48px);
+      letter-spacing: -0.03em;
+    }
+
+    .hero p {
+      margin: 0;
+      max-width: 880px;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .card, .panel {
+      background: var(--panel);
+      border: 1px solid rgba(31, 41, 51, 0.08);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .card .label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .card .value {
+      font-size: 34px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .panel {
+      padding: 18px;
+      overflow: hidden;
+    }
+
+    .panel h2 {
+      margin: 0 0 6px;
+      font-size: 22px;
+    }
+
+    .panel p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.secondary {
+      background: #e8f3f1;
+      color: var(--accent-strong);
+      border: 1px solid rgba(15, 118, 110, 0.2);
+    }
+
+    button.ghost {
+      background: #fff7ed;
+      color: #9a3412;
+      border: 1px solid rgba(154, 52, 18, 0.14);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(31, 41, 51, 0.08);
+      vertical-align: top;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.45);
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(82, 96, 109, 0.12);
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .status.planned { color: var(--planned); background: rgba(154, 103, 0, 0.12); }
+    .status.started { color: var(--started); background: rgba(7, 89, 133, 0.12); }
+    .status.in-progress { color: var(--progress); background: rgba(29, 78, 216, 0.12); }
+    .status.blocked { color: var(--blocked); background: rgba(185, 28, 28, 0.12); }
+    .status.completed { color: var(--done); background: rgba(22, 101, 52, 0.12); }
+
+    .task-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .task-actions button {
+      padding: 7px 10px;
+      font-size: 12px;
+    }
+
+    .mono {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(31,41,51,0.08);
+      border-radius: 14px;
+      padding: 14px;
+      min-height: 180px;
+      overflow: auto;
+    }
+
+    .list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .list-item {
+      border: 1px solid rgba(31, 41, 51, 0.08);
+      border-radius: 14px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.56);
+    }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .wide {
+      margin-top: 18px;
+    }
+
+    .error {
+      color: var(--blocked);
+      font-weight: 600;
+    }
+
+    .hidden-export {
+      display: none;
+    }
+
+    @media (max-width: 1100px) {
+      .grid, .layout {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .grid, .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .shell {
+        width: min(100% - 20px, 1280px);
+      }
+
+      th:nth-child(6), td:nth-child(6), th:nth-child(7), td:nth-child(7) {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <h1>Compliance Agent Dashboard</h1>
+      <p>금융 텍스트 및 이미지 마스킹 프로젝트의 작업 상태를 로컬에서 관리하는 대시보드입니다. workflow와 schedule 문서를 읽어와 표로 보여주고, 상태 버튼으로 작업 흐름을 갱신한 뒤 markdown 파일로 직접 저장할 수 있습니다.</p>
+    </section>
+
+    <section class="grid" id="summaryCards"></section>
+
+    <section class="panel" style="margin-top: 18px;">
+      <div>
+        <h2>작업 보드</h2>
+        <p>버튼 클릭으로 상태를 바꾸면 브라우저 로컬 저장소와 아래 export 영역이 갱신됩니다. Chromium 계열 브라우저에서는 markdown 파일에 직접 저장할 수 있고, 지원되지 않으면 다운로드로 대체됩니다.</p>
+        <div class="controls">
+          <button id="saveWorkflowButton">workflow 저장</button>
+          <button id="saveScheduleButton">schedule 저장</button>
+          <button id="saveAllButton" class="secondary">두 문서 저장</button>
+        </div>
+        <div id="taskError" class="error"></div>
+        <div id="saveStatus" class="muted" style="margin-bottom: 12px;"></div>
+        <div style="overflow:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>단계</th>
+                <th>작업 영역</th>
+                <th>작업 내용</th>
+                <th>상태</th>
+                <th>우선순위</th>
+                <th>수정일</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="taskTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel wide">
+      <h2>스케줄</h2>
+      <p>작업 이력과 대시보드에서 변경한 상태를 시간순으로 정리합니다.</p>
+      <div style="overflow:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>날짜</th>
+              <th>ID</th>
+              <th>작업</th>
+              <th>상태</th>
+              <th>메모</th>
+              <th>파일</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="layout wide">
+      <div class="hidden-export" id="workflowExport"></div>
+      <div class="hidden-export" id="scheduleExport"></div>
+    </section>
+  </div>
+
+  <script>
+    const workflowCandidates = ["./workflow.md"];
+    const scheduleCandidates = ["./schedule.md", "./schdule.md"];
+    const workflowStateKey = "compliance-agent-workflow-overrides";
+    const scheduleStateKey = "compliance-agent-schedule-overrides";
+    const canUseFileSystemAccess = typeof window.showSaveFilePicker === "function";
+    const canUseFilePicker = typeof window.showOpenFilePicker === "function";
+    const syncPollIntervalMs = 3000;
+    const fileHandles = {
+      workflow: null,
+      schedule: null,
+    };
+    const fileContents = {
+      workflow: null,
+      schedule: null,
+    };
+    const embeddedMarkdown = {
+      workflow: `# 작업 흐름
+
+  이 문서는 프로젝트 구조, 현재 상태, 다음 작업을 관리하는 기준 문서입니다.
+
+  ## 프로젝트 한눈에 보기
+
+  - 목표: 금융 문서와 텍스트에서 민감 정보를 안전하게 마스킹하는 파이프라인 구축
+  - 핵심 지표: 마스킹 누락 감소, 처리 시간 단축, 과다 마스킹 감소, 문서 유형 확장
+  - 진행 로드맵: 텍스트 마스킹 -> 모델 비교 및 고도화 -> 이미지 계약서 마스킹
+
+  ## 구조 요약
+
+  ### 텍스트 파이프라인
+
+  \`text -> NER model -> span extraction -> masking transformation\`
+
+  ### 이미지 파이프라인
+
+  \`image -> OCR -> text NER -> bbox mapping -> blur\`
+
+  또는
+
+  \`image -> document detection model -> bbox detection -> blur\`
+
+  ## 작업 보드
+
+  | ID | 단계 | 작업 영역 | 작업 내용 | 상태 | 우선순위 | 수정일 |
+  | --- | --- | --- | --- | --- | --- | --- |
+  | OPS-001 | 기반 | 실행 환경 | 텍스트 생성기 실행 경로와 환경 변수 정리 | 완료 | 높음 | 2026-07-06 |
+  | OPS-002 | 기반 | 문서 구축 | AGENTS.md, workflow.md, schedule.md, dashboard.html 구축 및 정리 | 완료 | 높음 | 2026-07-06 |
+  | TXT-001 | 1단계 | 데이터 스키마 | 금융 텍스트 span 엔티티 스키마 확정 | 완료 | 높음 | 2026-07-06 |
+  | TXT-002 | 1단계 | 데이터 생성 | 프롬프트별 출력 포맷을 하나의 span schema로 통일 | 예정 | 높음 | 2026-07-06 |
+  | TXT-003 | 1단계 | 학습 파이프라인 | train_model 노트북을 재사용 가능한 Python 학습 모듈로 분리 | 완료 | 높음 | 2026-07-06 |
+  | TXT-004 | 1단계 | 후처리 | 모델 출력 span을 마스킹 텍스트로 바꾸는 변환기 구현 | 예정 | 중간 | 2026-07-06 |
+  | TXT-005 | 1단계 | 평가 | 엔티티 기준 precision, recall, F1, 문서 단위 성공률 측정 스크립트 작성 | 예정 | 높음 | 2026-07-06 |
+  | TXT-006 | 2단계 | 모델 비교 | BERT, RoBERTa, Small LM, Hybrid 비교 실험 표준화 | 예정 | 중간 | 2026-07-06 |
+  | IMG-001 | 3단계 | OCR 파이프라인 | OCR -> NER -> bbox 매핑 방식의 이미지 마스킹 설계 문서 작성 | 예정 | 중간 | 2026-07-06 |
+  | IMG-002 | 3단계 | 비전 파이프라인 | Detection/LayoutLM/VLM 기반 대안 아키텍처 비교 | 예정 | 낮음 | 2026-07-06 |
+
+  ## 완료된 작업
+
+  - 텍스트 생성기의 import 경로와 실행 경로를 안정화했다.
+  - 환경 변수 예시 파일과 실행 문서를 정리했다.
+  - 루트 README와 requirements 파일을 추가했다.
+  - 에이전트 운영용 문서 구조를 정리했다.
+  - 금융 텍스트 canonical span 스키마 명세 파일 추가.
+  - train_model 노트북 로직을 Python 학습 모듈과 CLI로 분리했다.
+  - dashboard에서 workflow.md 와 schedule.md 저장 기능을 추가했다.
+  - dashboard를 file:// 로 직접 열어도 사용할 수 있게 수정했다.
+  - workflow.md의 영어 중심 표현을 쉬운 한국어로 정리했다.
+  `,
+      schedule: `# Schedule Log
+
+  이 문서는 작업 이력의 source of truth입니다. 새로운 작업을 시작하거나 상태가 바뀔 때마다 아래 표에 한 줄씩 추가합니다. 최신 기록을 위에 추가하세요.
+
+  ## Status Vocabulary
+
+  - \`planned\`
+  - \`started\`
+  - \`in-progress\`
+  - \`blocked\`
+  - \`completed\`
+
+  ## WBS
+
+  ### 1단계 텍스트 마스킹 모델
+
+  - TXT-001: 금융 텍스트 span 엔티티 스키마 확정
+  - TXT-002: 프롬프트별 출력 포맷을 하나의 span schema로 통일
+  - TXT-003: train_model 노트북을 재사용 가능한 Python 학습 모듈로 분리
+  - TXT-004: 모델 출력 span을 마스킹 텍스트로 바꾸는 변환기 구현
+  - TXT-005: 엔티티 기준 precision, recall, F1, 문서 단위 성공률 측정 스크립트 작성
+
+  ### 2단계 모델 비교 및 고도화
+
+  - TXT-006: BERT, RoBERTa, Small LM, Hybrid 비교 실험 표준화
+
+  ### 3단계 이미지 계약서 마스킹
+
+  - IMG-001: OCR -> NER -> bbox 매핑 방식의 이미지 마스킹 설계 문서 작성
+  - IMG-002: Detection/LayoutLM/VLM 기반 대안 아키텍처 비교
+
+  ## Work Log
+
+  | Date | Task ID | Task | Status | Note | Artifact |
+  | --- | --- | --- | --- | --- | --- |
+  | 2026-07-06 | OPS-002 | dashboard UI 단순화 | completed | 미리보기 제거, 액션 버튼을 예정/진행/완료로 변경, 최근 활동을 아래 스케줄 표로 이동 | docs/dashboard.html, docs/workflow.md |
+  | 2026-07-06 | OPS-002 | 문서 구축 항목 정리 | completed | dashboard 미리보기를 제거하고 workflow의 OPS 항목을 실행 환경과 문서 구축 두 줄로 단순화 | docs/workflow.md, docs/dashboard.html |
+  | 2026-07-06 | OPS-006 | workflow.md 쉬운 한국어 표현으로 정리 | completed | workflow 섹션 제목과 작업 보드 표현을 더 쉬운 한국어로 바꾸고 dashboard 저장 결과와 맞춤 | docs/workflow.md, docs/dashboard.html |
+  | 2026-07-06 | OPS-005 | dashboard file:// 로컬 열기 지원 | completed | fetch 실패 시 내장 markdown fallback과 수동 파일 불러오기 버튼을 추가 | docs/dashboard.html |
+  | 2026-07-06 | OPS-004 | dashboard markdown 직접 저장 기능 추가 | completed | File System Access API 기반 저장과 다운로드 fallback을 dashboard에 추가 | docs/dashboard.html |
+  | 2026-07-06 | TXT-003 | train_model 노트북 Python 모듈화 | completed | training 패키지와 CLI 진입점을 추가해 노트북 로직을 Python 모듈로 분리 | v1_text/training/pipeline.py, v1_text/train_model_v1.py |
+  | 2026-07-06 | TXT-001 | 금융 텍스트 span 엔티티 스키마 확정 | completed | canonical span 스키마의 문서형 명세와 JSON Schema 파일을 추가 | docs/specs/financial_text_span_schema.md, docs/specs/financial_text_span_schema.json |
+  | 2026-07-06 | OPS-004 | dashboard markdown 직접 저장 기능 추가 | in-progress | dashboard에서 workflow.md 와 schedule.md를 직접 저장할 수 있도록 기능 확장 시작 | docs/dashboard.html |
+  | 2026-07-06 | TXT-003 | train_model 노트북 Python 모듈화 | in-progress | 학습 노트북 로직을 재사용 가능한 학습 파이프라인 모듈로 분리 시작 | v1_text/train_model.ipynb |
+  | 2026-07-06 | TXT-001 | 금융 텍스트 span 엔티티 스키마 확정 | in-progress | span 스키마 명세 파일 설계 및 생성 시작 | docs/workflow.md |
+  | 2026-07-06 | OPS-003 | AGENTS.md 한국어화 | completed | AGENTS 운영 지침을 전체 한국어로 번역하고 표현을 정리 | AGENTS.md |
+  | 2026-07-06 | OPS-002 | Agent 운영 문서와 대시보드 구성 | completed | AGENTS, workflow, dashboard, schedule 포맷을 구축 | AGENTS.md, docs/workflow.md, docs/dashboard.html |
+  | 2026-07-06 | OPS-001 | 텍스트 생성기 실행성 개선 | completed | 경로 계산, .env 예시, README, requirements 정리 | v1_text/text_generator_v1.py, v1_text/llm/openrouter.py, README.md |
+  `,
+    };
+
+    const statusOrder = ["planned", "started", "in-progress", "blocked", "completed"];
+    const statusDisplayMap = {
+      planned: "예정",
+      started: "시작",
+      "in-progress": "진행 중",
+      blocked: "보류",
+      completed: "완료",
+    };
+    const statusParseMap = {
+      예정: "planned",
+      시작: "started",
+      진행중: "in-progress",
+      "진행 중": "in-progress",
+      보류: "blocked",
+      완료: "completed",
+      planned: "planned",
+      started: "started",
+      "in-progress": "in-progress",
+      blocked: "blocked",
+      completed: "completed",
+    };
+    let lastWorkflowSnapshot = "";
+    let syncTimerId = null;
+    let isSyncingWorkflow = false;
+
+    async function fetchFirstAvailable(paths) {
+      for (const path of paths) {
+        try {
+          const response = await fetch(path, { cache: "no-store" });
+          if (response.ok) {
+            return await response.text();
+          }
+        } catch (error) {
+          console.warn("Fetch failed:", path, error);
+        }
+      }
+      throw new Error(`Unable to load any of: ${paths.join(", ")}`);
+    }
+
+    async function openMarkdownFile(kind) {
+      try {
+        if (canUseFilePicker) {
+          const [handle] = await window.showOpenFilePicker({
+            multiple: false,
+            types: [
+              {
+                description: "Markdown file",
+                accept: {
+                  "text/markdown": [".md"],
+                  "text/plain": [".md", ".txt"],
+                },
+              },
+            ],
+          });
+          const file = await handle.getFile();
+          fileContents[kind] = await file.text();
+          fileHandles[kind] = handle;
+          setSaveStatus(`${kind}.md 파일을 직접 불러왔습니다.`);
+          await loadDashboard();
+          return;
+        }
+
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".md,.txt,text/markdown,text/plain";
+        input.addEventListener("change", async () => {
+          const file = input.files && input.files[0];
+          if (!file) {
+            return;
+          }
+          fileContents[kind] = await file.text();
+          setSaveStatus(`${file.name} 파일을 불러왔습니다.`);
+          await loadDashboard();
+        });
+        input.click();
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          setSaveStatus(`${kind}.md 파일 선택이 취소되었습니다.`, true);
+          return;
+        }
+        setSaveStatus(`${kind}.md 파일을 불러오지 못했습니다: ${error.message}`, true);
+      }
+    }
+
+    async function resolveMarkdownSource(kind, paths) {
+      if (fileContents[kind]) {
+        return fileContents[kind];
+      }
+
+      try {
+        return await fetchFirstAvailable(paths);
+      } catch (error) {
+        if (location.protocol === "file:") {
+          setSaveStatus("로컬 파일 모드로 열려 기본 내장 문서로 표시합니다. 최신 markdown를 반영하려면 workflow 열기, schedule 열기 버튼으로 직접 불러오세요.");
+          return embeddedMarkdown[kind];
+        }
+        throw error;
+      }
+    }
+
+    async function readWorkflowSourceForSync() {
+      if (fileHandles.workflow) {
+        const file = await fileHandles.workflow.getFile();
+        return await file.text();
+      }
+
+      return await fetchFirstAvailable(workflowCandidates);
+    }
+
+    function parseMarkdownTable(markdown, headerName) {
+      const lines = markdown.split(/\r?\n/);
+      const headerIndex = lines.findIndex((line) => line.includes(`| ${headerName} |`) || line.startsWith(`| ${headerName} |`));
+      if (headerIndex === -1) {
+        return [];
+      }
+
+      const rows = [];
+      for (let index = headerIndex + 2; index < lines.length; index += 1) {
+        const line = lines[index].trim();
+        if (!line.startsWith("|")) {
+          break;
+        }
+        const cells = line.split("|").slice(1, -1).map((cell) => cell.trim());
+        rows.push(cells);
+      }
+      return rows;
+    }
+
+    function readLocalJson(key, fallback) {
+      try {
+        const raw = localStorage.getItem(key);
+        return raw ? JSON.parse(raw) : fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function writeLocalJson(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function normalizeStatus(rawStatus) {
+      return statusParseMap[rawStatus] || "planned";
+    }
+
+    function normalizeTasks(taskRows) {
+      return taskRows.map((cells) => ({
+        id: cells[0] || "",
+        stage: cells[1] || "",
+        workstream: cells[2] || "",
+        task: cells[3] || "",
+        status: normalizeStatus(cells[4] || "planned"),
+        priority: cells[5] || "medium",
+        updated: cells[6] || "",
+      }));
+    }
+
+    function normalizeLogs(logRows) {
+      return logRows.map((cells) => ({
+        date: cells[0] || "",
+        taskId: cells[1] || "",
+        task: cells[2] || "",
+        status: normalizeStatus(cells[3] || "planned"),
+        note: cells[4] || "",
+        artifact: cells[5] || "",
+      }));
+    }
+
+    function mergeTaskOverrides(tasks, overrides) {
+      return tasks.map((task) => ({ ...task, ...(overrides[task.id] || {}) }));
+    }
+
+    function createStatusPill(status) {
+      const normalized = status.toLowerCase();
+      return `<span class="status ${normalized}">${statusDisplayMap[normalized] || normalized}</span>`;
+    }
+
+    function setSaveStatus(message, isError = false) {
+      const node = document.getElementById("saveStatus");
+      node.textContent = message;
+      node.className = isError ? "error" : "muted";
+    }
+
+    function renderSummary(tasks) {
+      const counts = statusOrder.reduce((acc, status) => {
+        acc[status] = tasks.filter((task) => task.status === status).length;
+        return acc;
+      }, {});
+
+      const total = tasks.length;
+      const summaryCards = document.getElementById("summaryCards");
+      const cards = [
+        { label: "전체 작업", value: total },
+        { label: "예정", value: counts["planned"] || 0 },
+        { label: "진행 중", value: (counts["started"] || 0) + (counts["in-progress"] || 0) },
+        { label: "완료", value: counts["completed"] || 0 },
+      ];
+
+      summaryCards.innerHTML = cards.map((card) => `
+        <article class="card">
+          <div class="label">${card.label}</div>
+          <div class="value">${card.value}</div>
+        </article>
+      `).join("");
+    }
+
+    function todayString() {
+      const now = new Date();
+      return now.toISOString().slice(0, 10);
+    }
+
+    function addLogEntry(task, status) {
+      const logs = readLocalJson(scheduleStateKey, []);
+      logs.unshift({
+        date: todayString(),
+        taskId: task.id,
+        task: task.task,
+        status,
+        note: `Dashboard 상태 변경: ${status}`,
+        artifact: "docs/dashboard.html",
+      });
+      writeLocalJson(scheduleStateKey, logs);
+    }
+
+    async function syncWorkflowFromSource() {
+      if (isSyncingWorkflow) {
+        return;
+      }
+
+      isSyncingWorkflow = true;
+      try {
+        const latestWorkflow = await readWorkflowSourceForSync();
+        if (!latestWorkflow || latestWorkflow === lastWorkflowSnapshot) {
+          return;
+        }
+
+        lastWorkflowSnapshot = latestWorkflow;
+        fileContents.workflow = latestWorkflow;
+        await loadDashboard();
+      } catch (error) {
+        console.warn("Workflow sync skipped:", error);
+      } finally {
+        isSyncingWorkflow = false;
+      }
+    }
+
+    async function persistWorkflowIfPossible() {
+      const exportNode = document.getElementById("workflowExport");
+      if (!exportNode || !exportNode.textContent.trim()) {
+        return;
+      }
+
+      if (!canUseFileSystemAccess && !fileHandles.workflow) {
+        return;
+      }
+
+      await writeMarkdownFile("workflow", "workflowExport", "workflow.md");
+      lastWorkflowSnapshot = exportNode.textContent;
+      fileContents.workflow = exportNode.textContent;
+    }
+
+    async function updateTaskStatus(taskId, status, state) {
+      const task = state.tasks.find((item) => item.id === taskId);
+      if (!task) {
+        return;
+      }
+
+      const overrides = readLocalJson(workflowStateKey, {});
+      overrides[taskId] = {
+        status,
+        updated: todayString(),
+      };
+      writeLocalJson(workflowStateKey, overrides);
+      addLogEntry(task, status);
+      await loadDashboard();
+      await persistWorkflowIfPossible();
+    }
+
+    function renderTasks(state) {
+      const tbody = document.getElementById("taskTableBody");
+      tbody.innerHTML = state.tasks.map((task) => `
+        <tr>
+          <td><strong>${task.id}</strong></td>
+          <td>${task.stage}</td>
+          <td>${task.workstream}</td>
+          <td>${task.task}</td>
+          <td>${createStatusPill(task.status)}</td>
+          <td>${task.priority}</td>
+          <td>${task.updated}</td>
+          <td>
+            <div class="task-actions">
+              <button data-task="${task.id}" data-status="planned" class="danger">예정</button>
+              <button data-task="${task.id}" data-status="in-progress" class="warning">진행</button>
+              <button data-task="${task.id}" data-status="completed" class="primary-alt">완료</button>
+            </div>
+          </td>
+        </tr>
+      `).join("");
+
+      tbody.querySelectorAll("button[data-task]").forEach((button) => {
+        button.addEventListener("click", () => updateTaskStatus(button.dataset.task, button.dataset.status, state));
+      });
+    }
+
+    function renderScheduleTable(state) {
+      const tableBody = document.getElementById("scheduleTableBody");
+      const allLogs = [...state.localLogs, ...state.logs]
+        .sort((left, right) => `${right.date} ${right.taskId}`.localeCompare(`${left.date} ${left.taskId}`))
+        .slice(0, 20);
+
+      tableBody.innerHTML = allLogs.map((log) => `
+        <tr>
+          <td>${log.date}</td>
+          <td><strong>${log.taskId}</strong></td>
+          <td>${log.task}</td>
+          <td>${createStatusPill(log.status)}</td>
+          <td>${log.note}</td>
+          <td>${log.artifact}</td>
+        </tr>
+      `).join("");
+    }
+
+    function buildWorkflowMarkdown(state) {
+      const lines = [];
+      lines.push("# 작업 흐름", "", "이 문서는 프로젝트 구조, 현재 상태, 다음 작업을 관리하는 기준 문서입니다.", "", "## 프로젝트 한눈에 보기", "", "- 목표: 금융 문서와 텍스트에서 민감 정보를 안전하게 마스킹하는 파이프라인 구축", "- 핵심 지표: 마스킹 누락 감소, 처리 시간 단축, 과다 마스킹 감소, 문서 유형 확장", "- 진행 로드맵: 텍스트 마스킹 -> 모델 비교 및 고도화 -> 이미지 계약서 마스킹", "", "## 구조 요약", "", "### 텍스트 파이프라인", "", "`text -> NER model -> span extraction -> masking transformation`", "", "### 이미지 파이프라인", "", "`image -> OCR -> text NER -> bbox mapping -> blur`", "", "또는", "", "`image -> document detection model -> bbox detection -> blur`", "", "## 작업 보드", "", "| ID | 단계 | 작업 영역 | 작업 내용 | 상태 | 우선순위 | 수정일 |", "| --- | --- | --- | --- | --- | --- | --- |");
+
+      const taskOrder = ["OPS-001", "OPS-002", "TXT-001", "TXT-002", "TXT-003", "TXT-004", "TXT-005", "TXT-006", "IMG-001", "IMG-002"];
+      const taskMap = new Map(state.tasks.map((task) => [task.id, task]));
+
+      taskOrder.forEach((taskId) => {
+        const task = taskMap.get(taskId);
+        if (!task) {
+          return;
+        }
+        lines.push(`| ${task.id} | ${task.stage} | ${task.workstream} | ${task.task} | ${statusDisplayMap[task.status] || task.status} | ${task.priority} | ${task.updated} |`);
+      });
+
+      const done = state.tasks.filter((task) => task.status === "completed").map((task) => `- ${task.task}`);
+
+      lines.push("", "## 완료된 작업", "");
+      lines.push(...(done.length ? done : ["- 없음"]));
+      return lines.join("\n");
+    }
+
+    function buildScheduleMarkdown(state) {
+      const mergedLogs = [...state.localLogs, ...state.logs]
+        .sort((left, right) => `${right.date} ${right.taskId}`.localeCompare(`${left.date} ${left.taskId}`));
+      const lines = [];
+      lines.push("# Schedule Log", "", "이 문서는 작업 이력의 source of truth입니다. 새로운 작업을 시작하거나 상태가 바뀔 때마다 아래 표에 한 줄씩 추가합니다. 최신 기록을 위에 추가하세요.", "", "## Status Vocabulary", "", "- `planned`", "- `started`", "- `in-progress`", "- `blocked`", "- `completed`", "", "## WBS", "", "### 1단계 텍스트 마스킹 모델", "", "- TXT-001: 금융 텍스트 span 엔티티 스키마 확정", "- TXT-002: 프롬프트별 출력 포맷을 하나의 span schema로 통일", "- TXT-003: train_model 노트북을 재사용 가능한 Python 학습 모듈로 분리", "- TXT-004: 모델 출력 span을 마스킹 텍스트로 바꾸는 변환기 구현", "- TXT-005: 엔티티 기준 precision, recall, F1, 문서 단위 성공률 측정 스크립트 작성", "", "### 2단계 모델 비교 및 고도화", "", "- TXT-006: BERT, RoBERTa, Small LM, Hybrid 비교 실험 표준화", "", "### 3단계 이미지 계약서 마스킹", "", "- IMG-001: OCR -> NER -> bbox 매핑 방식의 이미지 마스킹 설계 문서 작성", "- IMG-002: Detection/LayoutLM/VLM 기반 대안 아키텍처 비교", "", "## Work Log", "", "| Date | Task ID | Task | Status | Note | Artifact |", "| --- | --- | --- | --- | --- | --- |");
+      mergedLogs.forEach((log) => {
+        lines.push(`| ${log.date} | ${log.taskId} | ${log.task} | ${log.status} | ${log.note} | ${log.artifact} |`);
+      });
+      return lines.join("\n");
+    }
+
+    function downloadText(text, fileName) {
+      const blob = new Blob([text], { type: "text/markdown;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    async function writeMarkdownFile(kind, nodeId, suggestedName) {
+      const text = document.getElementById(nodeId).textContent;
+
+      if (!canUseFileSystemAccess) {
+        downloadText(text, suggestedName);
+        setSaveStatus(`${suggestedName} 파일 시스템 저장 API를 지원하지 않아 다운로드로 대체했습니다.`);
+        return;
+      }
+
+      try {
+        const handle = fileHandles[kind] ?? await window.showSaveFilePicker({
+          suggestedName,
+          types: [
+            {
+              description: "Markdown file",
+              accept: {
+                "text/markdown": [".md"],
+                "text/plain": [".md"],
+              },
+            },
+          ],
+        });
+        const writable = await handle.createWritable();
+        await writable.write(text);
+        await writable.close();
+        fileHandles[kind] = handle;
+        fileContents[kind] = text;
+        if (kind === "workflow") {
+          lastWorkflowSnapshot = text;
+        }
+        setSaveStatus(`${suggestedName} 저장을 완료했습니다.`);
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          setSaveStatus(`${suggestedName} 저장이 취소되었습니다.`, true);
+          return;
+        }
+        setSaveStatus(`${suggestedName} 저장 실패: ${error.message}`, true);
+      }
+    }
+
+    async function saveAllMarkdownFiles() {
+      await writeMarkdownFile("workflow", "workflowExport", "workflow.md");
+      await writeMarkdownFile("schedule", "scheduleExport", "schedule.md");
+    }
+
+    async function loadDashboard() {
+      const errorNode = document.getElementById("taskError");
+      errorNode.textContent = "";
+
+      try {
+        const [workflowMarkdown, scheduleMarkdown] = await Promise.all([
+          resolveMarkdownSource("workflow", workflowCandidates),
+          resolveMarkdownSource("schedule", scheduleCandidates),
+        ]);
+
+        const tasks = mergeTaskOverrides(
+          normalizeTasks(parseMarkdownTable(workflowMarkdown, "ID")),
+          readLocalJson(workflowStateKey, {})
+        ).sort((left, right) => left.id.localeCompare(right.id));
+
+        const logs = normalizeLogs(parseMarkdownTable(scheduleMarkdown, "Date"));
+        const localLogs = readLocalJson(scheduleStateKey, []);
+        const state = { tasks, logs, localLogs };
+
+        renderSummary(tasks);
+        renderTasks(state);
+        renderScheduleTable(state);
+
+        document.getElementById("workflowExport").textContent = buildWorkflowMarkdown(state);
+        document.getElementById("scheduleExport").textContent = buildScheduleMarkdown(state);
+        lastWorkflowSnapshot = workflowMarkdown;
+      } catch (error) {
+        errorNode.textContent = `문서를 읽지 못했습니다. 로컬 서버로 열었는지 확인하세요. 상세: ${error.message}`;
+      }
+    }
+
+    document.getElementById("saveWorkflowButton").addEventListener("click", () => writeMarkdownFile("workflow", "workflowExport", "workflow.md"));
+    document.getElementById("saveScheduleButton").addEventListener("click", () => writeMarkdownFile("schedule", "scheduleExport", "schedule.md"));
+    document.getElementById("saveAllButton").addEventListener("click", saveAllMarkdownFiles);
+
+    loadDashboard();
+    syncTimerId = window.setInterval(syncWorkflowFromSource, syncPollIntervalMs);
+  </script>
+</body>
+</html>

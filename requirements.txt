@@ -1,0 +1,8 @@
+pandas
+python-dotenv
+requests
+accelerate
+datasets
+seqeval
+torch
+transformers

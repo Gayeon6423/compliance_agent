@@ -1,30 +1,53 @@
 from pathlib import Path
-import sys
 import pandas as pd
 import json
 from dotenv import load_dotenv
 import os
 
-# 현재 디렉토리 기준으로 위쪽으로 올라가면서 .env 파일을 찾음
-load_dotenv()
+CURRENT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = CURRENT_DIR.parent
+load_dotenv(PROJECT_ROOT / ".env")
 
-# 노트북 기준 상위 폴더를 프로젝트 루트로 가정
-PROJECT_ROOT = Path.cwd().resolve().parent
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-from llm.openrouter import chat
-# print("Current Path:", Path.cwd())
+try:
+    from .llm.openrouter import chat
+except ImportError:
+    from llm.openrouter import chat
 
 # Config
-DATA_DIR = PROJECT_ROOT/"v1_text/data"
-PROMPT_DIR = PROJECT_ROOT/"v1_text/llm/prompt"
-SYSTEM_PROMPT = (PROMPT_DIR/os.getenv("SYSTEM_PROMPT")).read_text(encoding="utf-8")
-DATASET_NAME = os.getenv("DATASET_NAME")
-TOPIC = os.getenv("TOPIC")
-DATA_NUM = int(os.getenv("DATA_NUM"))
-OUTPUT_CSV_PATH = DATA_DIR/f"{DATASET_NAME.replace(' ', '_')}.csv"
+DATA_DIR = CURRENT_DIR / "data"
+PROMPT_DIR = CURRENT_DIR / "llm" / "prompt"
 
-print(SYSTEM_PROMPT)
+
+def _read_system_prompt(prompt_name: str | None) -> str:
+    if not prompt_name:
+        raise ValueError("SYSTEM_PROMPT 환경 변수가 비어 있습니다.")
+
+    prompt_path = PROMPT_DIR / prompt_name
+    if not prompt_path.exists():
+        fallback_path = prompt_path.with_suffix(".md") if prompt_path.suffix != ".md" else prompt_path
+        if fallback_path.exists():
+            prompt_path = fallback_path
+        else:
+            raise FileNotFoundError(f"시스템 프롬프트 파일을 찾을 수 없습니다: {prompt_path}")
+
+    return prompt_path.read_text(encoding="utf-8")
+
+
+def _get_runtime_config() -> tuple[str, str, int, Path, str]:
+    dataset_name = os.getenv("DATASET_NAME")
+    topic = os.getenv("TOPIC")
+    data_num = int(os.getenv("DATA_NUM", "1"))
+    system_prompt = _read_system_prompt(os.getenv("SYSTEM_PROMPT"))
+
+    if not dataset_name:
+        raise ValueError("DATASET_NAME 환경 변수가 비어 있습니다.")
+    if not topic:
+        raise ValueError("TOPIC 환경 변수가 비어 있습니다.")
+    if data_num < 1:
+        raise ValueError("DATA_NUM은 1 이상의 정수여야 합니다.")
+
+    output_csv_path = DATA_DIR / f"{dataset_name.replace(' ', '_')}.csv"
+    return dataset_name, topic, data_num, output_csv_path, system_prompt
 
 # Function
 def _strip_json_fence(text: str) -> str:
@@ -143,16 +166,20 @@ def generate_text(
 
     return str(output_path)
 
-# Run
-if __name__ == "__main__":
-
+def main() -> None:
+    dataset_name, topic, data_num, output_csv_path, system_prompt = _get_runtime_config()
     output_file = generate_text(
-        dataset_name=DATASET_NAME,
-        topic=TOPIC,
-        count=DATA_NUM,
-        output_csv_path=OUTPUT_CSV_PATH,
-        system_prompt=SYSTEM_PROMPT
+        dataset_name=dataset_name,
+        topic=topic,
+        count=data_num,
+        output_csv_path=output_csv_path,
+        system_prompt=system_prompt,
     )
 
     print(f"생성된 파일: {output_file}")
     preview_df = pd.read_csv(output_file)
+    print(preview_df.head())
+
+
+if __name__ == "__main__":
+    main()

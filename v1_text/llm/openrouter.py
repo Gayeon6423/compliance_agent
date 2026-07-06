@@ -1,10 +1,12 @@
+from pathlib import Path
 from dotenv import load_dotenv
 import os
 import requests
 import json
 
-# 현재 디렉토리 기준으로 위쪽으로 올라가면서 .env 파일을 찾음
-load_dotenv()
+CURRENT_DIR = Path(__file__).resolve().parent
+PROJECT_ROOT = CURRENT_DIR.parent.parent
+load_dotenv(PROJECT_ROOT / ".env")
 
 
 def _get_env_int(name: str, default: int) -> int:
@@ -38,14 +40,22 @@ def _extract_content(response: dict) -> tuple[str | None, str | None, dict]:
 def chat(system_prompt: str, user_prompt: str, max_tokens: int | None = None) -> str:
     url = "https://openrouter.ai/api/v1/chat/completions"
     configured_max_tokens = max_tokens if max_tokens is not None else _get_env_int("MAX_TOKENS", 4096)
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    model_name = os.getenv("MODEL")
+
+    if not api_key:
+        raise ValueError("OPENROUTER_API_KEY 환경 변수가 설정되지 않았습니다.")
+    if not model_name:
+        raise ValueError("MODEL 환경 변수가 설정되지 않았습니다.")
+
     headers = {
-        "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "https://localhost",
         "X-OpenRouter-Title": "complianceAgent",
     }
     payload: dict[str, object] = {
-        "model": os.getenv("MODEL"),
+        "model": model_name,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
